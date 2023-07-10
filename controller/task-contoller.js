@@ -1,47 +1,36 @@
 const TaskPrototype = require('./../models/task-model');
+const asyncWrapper = require('./../middleware/async-wrapper');
+const createCustomErrorMessage = require('./../errors/custom-error-message');
 
 // get all tasks
-const getAllTasks = async (req, res) =>{
-    try {
+const getAllTasks = asyncWrapper (async (req, res) =>{
         const myTask = await TaskPrototype.find();
+
         res.status(200).json({
-            "status": "success",
+            "status": "success", 
             myTask
         })
-    } catch (error) {
-        console.log(error)
-    }
-    
-}
+})
 
 // create a new task
-const createANewTAsk = async (req, res) => {
-    try {
+const createANewTAsk = asyncWrapper(async (req, res) => {
         const myTask = await TaskPrototype.create(req.body);
         res.status(201).json({myTask});
-    } catch (error) {
-        console.log(`Ni kama huweziongeza task, there's some error, ${error}`)
-    }
-}
+})
 // get a single task by id
-const getASingleTask = async (req, res)=> {
-    try {
+const getASingleTask = asyncWrapper(async (req, res, next)=> {
         const {id:taskID} = req.params;
         const myTask = await TaskPrototype.findOne({_id:taskID});
         if (!myTask) {
-            console.log("No task with Such an Id,please check your Id again and try");
+            return next(createCustomErrorMessage(`No task with id ${taskID}`, 404))
         }
         res.status(200).json({
             status: 'success',
             myTask
         })
-    } catch (error) {
-        console.log(`A problem at the get a single tasks Fucnctoin. Check it out, ${error}`);
-    }
-}
+})
 // update a single task
-const updateATask = async (req, res)=>{
-    try { 
+const updateATask = asyncWrapper(async (req, res, next)=>{
         const {id:taskID} = req.params;
         const myTask = await TaskPrototype.findByIdAndUpdate({_id: taskID}, req.body, {
             new: true,
@@ -51,8 +40,7 @@ const updateATask = async (req, res)=>{
         } )
 
         if (!myTask){
-            res.send(`Cannot find a task with id ${taskID}, check your id and try again`);
-            return;
+            return next( createCustomErrorMessage(`No task with id ${taskID}`, 404));
         }
 
         res.status(200).json({
@@ -60,28 +48,21 @@ const updateATask = async (req, res)=>{
             message:  "Task Updated Successfully",
             myTask
         })
-    } catch (error) {
-        console.log(`Patch Route has failed bro, ${error.message}`);
-    }
-}
+})
 // delete a single task
-const deleteATask = async (req, res) => {
-    try {
+const deleteATask = asyncWrapper(async (req, res) => {
         const {id:taskID} = req.params;
         const myTask = await TaskPrototype.findByIdAndDelete({_id:taskID}, {useFindAndModify: true,
             useCreateIndex: true});
 
         if (!myTask) {
-            console.log(`there is no task with id ${taskID}, please confirm the Id you want to delete and tru again`);
+            return next( createCustomErrorMessage(`No task with id ${taskID}`, 404))
         }
 
         res.status(200).json({
             status: "succeess",
             task: null
         })
-    } catch (error) {
-        console.log(`The delete route function has got an error, ${error.message}`);
-    }
-}
+})
 
 module.exports = {getAllTasks, getASingleTask, createANewTAsk, updateATask, deleteATask}

@@ -9,7 +9,7 @@ connectDB = mongoose.connect(connectionString,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useFindAndModify: true,
-        useCreateIndex: true
+        useCreateIndex: true,
     })
     .then(
         console.log('Connected to Compass Database')
