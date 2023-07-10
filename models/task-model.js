@@ -7,7 +7,8 @@ const TaskSchema = new mongoose.Schema(
             required: [true, 'Write your task down, you cannot have a blank task'],
             trim: true,
             minlength: [5, 'Your task name should be at least five characters long'],
-            maxlength: [90, 'Your task name is too long, please summarise it to atmost 90 characters long']
+            maxlength: [90, 'Your task name is too long, please summarise it to atmost 90 characters long'],
+            unique: [true, 'Naming your tasks should be unique, you cannot have different tasks with the same name']
         },
         completed: {
             type: Boolean,
