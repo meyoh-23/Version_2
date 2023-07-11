@@ -1,4 +1,3 @@
-
 // our Custom Error Message  class to Extend The Inbuild Error Class
 class CustomErrorMessage extends Error {
     constructor(message, statusCode) {

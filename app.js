@@ -11,6 +11,7 @@ const errorHandler = require('./middleware/error-handler');
 const app = express();
 
 // middleware stack
+app.use(express.static('./public'))
 app.use(express.json())
 
 // routing all tasks 

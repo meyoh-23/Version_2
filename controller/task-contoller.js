@@ -1,5 +1,6 @@
 const TaskPrototype = require('./../models/task-model');
 const asyncWrapper = require('./../middleware/async-wrapper');
+const {createCustomErrorMessage} = require('./../errors/custom-error-message');
 
 
 // get all tasks
@@ -22,7 +23,10 @@ const getASingleTask = asyncWrapper(async (req, res, next)=> {
         const {id:taskID} = req.params;
         const myTask = await TaskPrototype.findOne({_id:taskID});
         if (!myTask) {
-            return next(createCustomErrorMessage(`No task with id ${taskID}`, 404))
+            return next(createCustomErrorMessage(`No task with id ${taskID}`, 404));
+            /* const error = new Error('Not Found!')
+            error.status = 404
+            return res.status(404).json({msg: `No task with id ${taskID}`}); */
         }
         res.status(200).json({
             status: 'success',
@@ -36,11 +40,11 @@ const updateATask = asyncWrapper(async (req, res, next)=>{
             new: true,
             runValidators: true,
             useFindAndModify: true,
-        useCreateIndex: true
+            useCreateIndex: true
         } )
 
         if (!myTask){
-            return next( createCustomErrorMessage(`No task with id ${taskID}`, 404));
+            return next(createCustomErrorMessage(`No task with id ${taskID}`, 404));
         }
 
         res.status(200).json({
@@ -56,7 +60,7 @@ const deleteATask = asyncWrapper(async (req, res) => {
             useCreateIndex: true});
 
         if (!myTask) {
-            return next( createCustomErrorMessage(`No task with id ${taskID}`, 404))
+            return next(createCustomErrorMessage(`No task with id ${taskID}`, 404));
         }
 
         res.status(200).json({
